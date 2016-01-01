@@ -1,4 +1,4 @@
-# (我的个人博客)[http://codecly259.github.io]
+# [我的个人博客](http://codecly259.github.io)
 this is my own blog
 
 ## 介绍
