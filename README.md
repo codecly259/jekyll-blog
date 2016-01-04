@@ -1,5 +1,5 @@
 # [我的个人博客](http://codecly259.github.io)
-this is my own blog
+this is my own blog  http://codecly259.github.io
 
 ## 介绍
 这是我的个人博客，现在正在构建中，计划使用jekyll构建静态博客
