@@ -5,8 +5,10 @@ category : dialy
 tagline: "socialize comment system"
 tags : [comment,duoshuo,disqus]
 ---
+{% include JB/setup %}
 
 以下是几个评论系统，这里做个记录，有时间去了解下
+
 - Disqus：http://disqus.com
 - 友  言：http://uyan.cc
 - 评论啦：http://pinglun.la
