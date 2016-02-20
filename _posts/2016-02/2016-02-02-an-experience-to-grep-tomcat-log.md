@@ -11,21 +11,26 @@ tags : [tomcat,log,catalina.out]
 也就是个查询tocmat中日志的事情。之前的一个定时任务在本地测试没有问题，于是放到生产环境中，过段时间貌似没有产生预期的效果。
 于是想查看日志看看到底有什么问题。然而，现在问题来了，生产环境中的日志全部打印在默认的文件中，即:`{$TOMCAT_HONME}/logs/catalina.out`
 此文件已大量堆积到现在臃肿到几G的地步。偷偷的百度了下怎么查看文件大小：
+
 ```sh
 ls -lh catalina.out
 
 -rw-rw-r-- 1 kanms kanms 5.2G Feb  2 15:45 catalina.out
 ```
+
 对，没有看错，**5.2G**!!!
 
 # 事件的经历
 - 首先找下是否有文件异常时自定义的一些打印日志,其中 -n 表示显示行号。
+
 ```sh
 [kanms@kanms-web logs]$ grep -n "带附件和图片的邮件发送失败！！！" catalina.out
 65393183:[kanms-eleManage]  『带附件和图片的邮件发送失败！！！』  (线程名：pool-8-thread-1) cn.com.starit.kanms.util.mail.SendMailUtil(SendMailUtil.java:81) 2016-02-02 00:00:02,616
 65393215:[kanms-eleManage]  『带附件和图片的邮件发送失败！！！』  (线程名：pool-7-thread-1) cn.com.starit.kanms.util.mail.SendMailUtil(SendMailUtil.java:81) 2016-02-02 00:00:02,616
 ```
+
 - 根据显示的信息及时间然后定位需要查看的日志内容，如查看上面第一次出现后的200行日志
+
 ```sh
 [kanms@kanms-web logs]$ sed -n "65393183,65393383p" catalina.out
 [kanms-eleManage]  『带附件和图片的邮件发送失败！！！』  (线程名：pool-8-thread-1) cn.com.starit.kanms.util.mail.SendMailUtil(SendMailUtil.java:81) 2016-02-02 00:00:02,616
@@ -62,12 +67,15 @@ javax.mail.MessagingException: Unknown SMTP host: mail.ustcinfo.com;
 	at java.lang.Thread.run(Thread.java:745)
 
 ```
+
 - 通过日志发现原来是发送邮件服务器主机mail.ustcinfo.com不通的问题，但是本地使用同样的主机配置又试了一下可以发送
 - 于是在服务器上ping服务器主机不通。
+
 ```sh
 [kanms@kanms-web logs]$ ping mail.ustcinfo.com
 ping: unknown host mail.ustcinfo.com
 ```
+
 - 网上查阅之后才知道原来linux服务器上发送接收服务器需要安装sendmail包
 - 安装后依然无效，可能是配置不正确，目前是把邮箱服务器由域名改成IP
 

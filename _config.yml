@@ -6,14 +6,17 @@ exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "
 highlighter: pygments
 encoding: utf-8
 
-markdown: redcarpet
-redcarpet:
+markdown: kramdown
+kramdown:
+  input: GFM
   extensions:
-    - fenced_code_blocks
-    - no_intra_emphasis
-    - strikethrough
     - autolink
-    - tables
+    - footnotes
+    - smart
+  use_coderay: true
+  syntax_highlighter: rouge
+  coderay:
+    coderay_line_numbers:  nil
 
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
