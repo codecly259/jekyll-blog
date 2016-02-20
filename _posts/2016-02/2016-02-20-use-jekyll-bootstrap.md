@@ -1,18 +1,18 @@
 ---
 layout: post
-title: ¿ìËÙÊ¹ÓÃjekyll bootstrapÖ÷Ìâ
+title: å¿«é€Ÿä½¿ç”¨jekyll bootstrapä¸»é¢˜
 category : dialy
 tagline: "jekyll bootstrap"
 tags : [jekyll bootstrap]
 ---
 
-±¾ÎÄ½éÉÜjekyll´î½¨»ùÓÚjekyll-bootstrapÖ÷ÌâµÄ¾²Ì¬²©¿Í
+æœ¬æ–‡ä»‹ç»jekyllæ­å»ºåŸºäºjekyll-bootstrapä¸»é¢˜çš„é™æ€åšå®¢
 
-## ±¾µØÔËĞĞjekyll-bootstrap
+## æœ¬åœ°è¿è¡Œjekyll-bootstrap
 
-> Ê×ÏÈÇëÈ·ÈÏ±¾µØÒÑ°²×°ºÃjekyllÏà¹Ø»·¾³£º°üÀ¨git,ruby,rubygem,python,pygments,jekyllµÈ
+> é¦–å…ˆè¯·ç¡®è®¤æœ¬åœ°å·²å®‰è£…å¥½jekyllç›¸å…³ç¯å¢ƒï¼šåŒ…æ‹¬git,ruby,rubygem,python,pygments,jekyllç­‰
 
-ÔÚgithubÉÏÏÂÔØjekyll-bootstrap²¢Ê¹ÓÃjekyll±¾µØÔËĞĞ
+åœ¨githubä¸Šä¸‹è½½jekyll-bootstrapå¹¶ä½¿ç”¨jekyllæœ¬åœ°è¿è¡Œ
 
 ```sh
 git clone https://github.com/plusjade/jekyll-bootstrap.git
@@ -21,42 +21,42 @@ git remote set-url origin https://github/your_user_name/program_name(your_user_n
 git push origin master / git push origin gh-pages (program_name)
 jekyll serve
 ```
-ÆäÖĞÖĞ¼äµÄÉèÖÃurlºÍ·¢²¼ÊÇ·¢²¼µ½githubÉÏµÄ£¬²»ÊÇ±¾µØÔËĞĞ±ØĞë¡£ 
-³É¹¦Æô¶¯ºó·ÃÎÊlocalhost:4000¼´¿É·ÃÎÊ²©¿ÍÖ÷Ò³¡£
+å…¶ä¸­ä¸­é—´çš„è®¾ç½®urlå’Œå‘å¸ƒæ˜¯å‘å¸ƒåˆ°githubä¸Šçš„ï¼Œä¸æ˜¯æœ¬åœ°è¿è¡Œå¿…é¡»ã€‚ 
+æˆåŠŸå¯åŠ¨åè®¿é—®localhost:4000å³å¯è®¿é—®åšå®¢ä¸»é¡µã€‚
 
-## jekyll-bootstrapÖ÷ÌâµÄ°²×°ºÍÑ¡Ôñ
+## jekyll-bootstrapä¸»é¢˜çš„å®‰è£…å’Œé€‰æ‹©
 
-ÒÔÉÏÆô¶¯jekyll-bootstrapÊÇÄ¬ÈÏÊ¹ÓÃtwitterÖ÷Ìâ£¬Èç¹ûÏë¸ü¸ÄÖ÷Ìâ
-¿ÉÒÔÊ¹ÓÃ`rake`ÏÂÔØ°²×°Ö÷Ìâ¡£
+ä»¥ä¸Šå¯åŠ¨jekyll-bootstrapæ˜¯é»˜è®¤ä½¿ç”¨twitterä¸»é¢˜ï¼Œå¦‚æœæƒ³æ›´æ”¹ä¸»é¢˜
+å¯ä»¥ä½¿ç”¨`rake`ä¸‹è½½å®‰è£…ä¸»é¢˜ã€‚
 
-### °²×°Ö÷Ìâ
-> Ê×ÏÈÈ·ÈÏrakeÃ»ÓĞÎÊÌâ£¬ÎÒÔÚ°²×°µÄÊ±ºò¾Í±¨´í`can not load file ...`£¬¾­²éÕÒÃ»ÓĞ°²×°rake±àÒëÄ£¿é¡£
-> Ê¹ÓÃ`gem install rake`½øĞĞ°²×°
+### å®‰è£…ä¸»é¢˜
+> é¦–å…ˆç¡®è®¤rakeæ²¡æœ‰é—®é¢˜ï¼Œæˆ‘åœ¨å®‰è£…çš„æ—¶å€™å°±æŠ¥é”™`can not load file ...`ï¼Œç»æŸ¥æ‰¾æ²¡æœ‰å®‰è£…rakeç¼–è¯‘æ¨¡å—ã€‚
+> ä½¿ç”¨`gem install rake`è¿›è¡Œå®‰è£…
 
-#### Ê¹ÓÃgitµØÖ·°²×°
+#### ä½¿ç”¨gitåœ°å€å®‰è£…
 ```
 rake theme:install git="https://github.com/jekyllbootstrap/theme-the-program.git"
 ```
-°²×°Íê³Éºó»áÌáÊ¾ÊÇ·ñÊ¹ÓÃ´ËÖ÷Ìâ£¬ÊäÈë`Y`»Ø³µÊ¹ÓÃ¸ÃÖ÷Ìâ¡£
+å®‰è£…å®Œæˆåä¼šæç¤ºæ˜¯å¦ä½¿ç”¨æ­¤ä¸»é¢˜ï¼Œè¾“å…¥`Y`å›è½¦ä½¿ç”¨è¯¥ä¸»é¢˜ã€‚
 
-#### ÏÂÔØÑ¹Ëõ°üºó°²×°
-ÔÚÍøÉÏÏÂÔØÖ÷ÌâµÄ²¢½âÑ¹µ½`./_theme_packages`Ä¿Â¼ÏÂ
+#### ä¸‹è½½å‹ç¼©åŒ…åå®‰è£…
+åœ¨ç½‘ä¸Šä¸‹è½½ä¸»é¢˜çš„å¹¶è§£å‹åˆ°`./_theme_packages`ç›®å½•ä¸‹
 ```
 rake theme:install name="theme-name"
 ```
 
-### ÇĞ»»Ö÷Ìâ
-Ö÷Ìâ°²×°ºó,Ò²¿ÉÒÔÍ¨¹ı`rake`ÔÚÖ÷Ìâ¼ä½øĞĞÇĞ»»
+### åˆ‡æ¢ä¸»é¢˜
+ä¸»é¢˜å®‰è£…å,ä¹Ÿå¯ä»¥é€šè¿‡`rake`åœ¨ä¸»é¢˜é—´è¿›è¡Œåˆ‡æ¢
 ```
 rake theme:switch name="the-program"
 ```
 
-## ¸ü¶àÔÄ¶Á
+## æ›´å¤šé˜…è¯»
 
-- [jekyll ¹Ù·½ÎÄµµ](http://jekyllrb.com/docs/home/)
-- [bootstrapÖĞÎÄÍÅ¶Ó·­ÒëµÄjekyllÎÄµµ](http://jekyll.bootcss.com/docs/home/)
+- [jekyll å®˜æ–¹æ–‡æ¡£](http://jekyllrb.com/docs/home/)
+- [bootstrapä¸­æ–‡å›¢é˜Ÿç¿»è¯‘çš„jekyllæ–‡æ¡£](http://jekyll.bootcss.com/docs/home/)
 - [The Quickest Way to Blog on GitHub Pages](http://jekyllbootstrap.com/)
-- [ÉÏÃæÍøÕ¾µÄ`Using Themes`²¿·Ö](http://jekyllbootstrap.com/usage/jekyll-theming.html)
+- [ä¸Šé¢ç½‘ç«™çš„`Using Themes`éƒ¨åˆ†](http://jekyllbootstrap.com/usage/jekyll-theming.html)
 
 
 
