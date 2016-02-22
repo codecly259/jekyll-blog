@@ -6,6 +6,9 @@ tagline: "jekyll bootstrap"
 tags : [jekyll bootstrap]
 ---
 
+* 目录
+{:toc}
+
 本文介绍jekyll搭建基于jekyll-bootstrap主题的静态博客
 
 ## 本地运行jekyll-bootstrap

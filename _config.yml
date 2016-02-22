@@ -3,7 +3,7 @@
 permalink: /:categories/:year/:month/:day/:title 
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "_posts/images"]
-highlighter: pygments
+highlighter: rouge
 encoding: utf-8
 
 markdown: kramdown
@@ -13,10 +13,10 @@ kramdown:
     - autolink
     - footnotes
     - smart
-  use_coderay: true
+  enable_coderay: true
   syntax_highlighter: rouge
   coderay:
-    coderay_line_numbers:  nil
+    coderay_line_numbers:  1
 
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
