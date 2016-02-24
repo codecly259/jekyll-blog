@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>HTML5 Geolocation距离跟踪器</title>
+</head>
+
+<body onload="loadDemo()">
+
+<h1>HTML5 Geolocation获取当前位置</h1>
+
+<p id="status">该浏览器不支持HTML5 Geolocation。</p>
+
+<h2>当前位置：</h2>
+<table border="1" style="padding: 2px">
+    <tr>
+        <td colspan="2">WGS-84国际标准(GPS)坐标系</td>
+    </tr>
+    <tr>
+        <td width="60" scope="col">纬度</th>
+        <td width="140" id="latitude">?</td>
+    </tr>
+    <tr>
+        <td>经度</td>
+        <td id="longitude">?</td>
+    </tr>
+    <tr>
+        <td>准确度</td>
+        <td id="accuracy">?</td>
+    </tr>
+</table>
+
+<table border="1" style="padding: 2px">
+    <tr>
+        <td colspan="2">GCJ-02国家标准坐标系</td>
+    </tr>
+    <tr>
+        <td width="100" scope="col">gcj02纬度</td>
+        <td width="300" id="gcj02_lat"></td>
+    </tr>
+    <tr>
+        <td>gcj02经度</td>
+        <td id="gcj02_lon"></td>
+    </tr>
+    <tr>
+        <td>高德地图逆解析地址</td>
+        <td id="gcj02_add"></td>
+    </tr>
+</table>
+
+<div id="amap" style="width:500px; height:300px; position:relative;"></div>
+
+<table border="1" style="padding: 2px">
+    <tr>
+        <td colspan="2">BD-09百度地图坐标系</td>
+    </tr>
+    <tr>
+        <td width="100" scope="col">bd09纬度</td>
+        <td width="300" id="bd09_lat"></td>
+    </tr>
+    <tr>
+        <td>bd09经度</td>
+        <td id="bd09_lon"></td>
+    </tr>
+    <tr>
+        <td>百度地图逆解析地址</td>
+        <td id="bd09_add"></td>
+    </tr>
+</table>
+
+<div id="bmap" style="width:500px; height:300px; position:relative;"></div>
+
+<script src="//cdn.bootcss.com/jquery/1.9.0/jquery.js"></script>
+<script src="http://api.map.baidu.com/api?v=2.0&ak=2mye0ZM8302vZRLsTVH9d2C8" type="text/javascript"></script>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=194b5bde51d2d66508fb1cfb3c209197&plugin=AMap.Geocoder"></script>
+
+<script type="text/javascript">
+
+    var totalDistance = 0.0;
+    var lastLat;
+    var lastLong;
+
+    var bd_api = {};
+
+    function toRadians(degree) {
+        return this * Math.PI / 180;
+    }
+
+
+    function distance(latitude1, longitude1, latitude2, longitude2) {
+        // R是地球半径（KM）
+        var R = 6371;
+
+        var deltaLatitude = toRadians(latitude2-latitude1);
+        var deltaLongitude = toRadians(longitude2-longitude1);
+        latitude1 = toRadians(latitude1);
+        latitude2 = toRadians(latitude2);
+
+        var a = Math.sin(deltaLatitude/2) *
+                Math.sin(deltaLatitude/2) +
+                Math.cos(latitude1) *
+                Math.cos(latitude2) *
+                Math.sin(deltaLongitude/2) *
+                Math.sin(deltaLongitude/2);
+
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c;
+        return d;
+    }
+
+
+    function updateStatus(message) {
+        document.getElementById("status").innerHTML = message;
+    }
+
+    function loadDemo() {
+        if(navigator.geolocation) {
+            var myOptions = {
+                enableHighAcuracy: true,
+                timeout: 5000,
+                maximumAge: 3000
+            }
+            updateStatus("浏览器支持HTML5 Geolocation。");
+            // navigator.geolocation.watchPosition(updateLocation, handleLocationError, {maximumAge:20000});
+            navigator.geolocation.getCurrentPosition(showPosition,handleLocationError,myOptions);
+        }else{
+            updateStatus("浏览器不支持HTML5 Geolocation.");
+        }
+    }
+
+    /**
+     * 显示位置信息
+     * @param position
+     */
+    function showPosition(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+
+        console.info(position);
+
+        document.getElementById("latitude").innerHTML = latitude;
+        document.getElementById("longitude").innerHTML = longitude;
+        document.getElementById("accuracy").innerHTML = accuracy;
+//        toBd09(latitude, longitude);
+
+        // GPS坐标转换成bd09ll坐标,以可以在百度地图上显示以及使用百度地图相关的API
+        var gcj_02_location = GPS.gcj_encrypt(latitude, longitude);
+        var bd_09_location = GPS.bd_encrypt(gcj_02_location['lat'],gcj_02_location['lon']);
+
+        document.getElementById("gcj02_lat").innerHTML = gcj_02_location['lat'];
+        document.getElementById("gcj02_lon").innerHTML = gcj_02_location['lon'];
+        amapGeocoder(gcj_02_location['lon'], gcj_02_location['lat']);
+
+        document.getElementById("bd09_lat").innerHTML = bd_09_location['lat'];
+        document.getElementById("bd09_lon").innerHTML = bd_09_location['lon'];
+
+        console.info("bd_api:" + bd_api.lon + "," + bd_api.lat);
+        console.info("bd09ll:"+bd_09_location['lon'] + "," + bd_09_location['lat']);
+
+
+        // amap 高德地图(已被阿里收购)显示位置
+        var amap = new AMap.Map("amap", {  // 创建地图实例
+            resizeEnable: true,
+            zoom: 18
+        });
+        var amarker = new AMap.Marker({  //加点
+            map: amap,
+            position: [gcj_02_location['lon'], gcj_02_location['lat']]
+        });
+        amap.setFitView();
+
+        // bmap 百度地图显示位置
+        var map = new BMap.Map("bmap");            // 创建Map实例
+        var point = new BMap.Point(bd_09_location['lon'],bd_09_location['lat']);    // 创建点坐标
+//        var point = new BMap.Point(bd_api.lon, bd_api.lat);
+        map.centerAndZoom(point,18);
+        map.enableScrollWheelZoom();
+        var mk = new BMap.Marker(point); // 创建地图标记
+        map.addOverlay(mk);
+        map.panTo(point);
+        var gc = new BMap.Geocoder();
+        gc.getLocation(point, function(rs) {
+            console.info(rs);
+            document.getElementById("bd09_add").innerHTML = rs.address;
+        });
+    }
+
+    /**
+     * 真实经纬度(GPS)转换为百度经纬度(bd09ll)
+     */
+    function toBd09(lat,lon) {
+        var coords = lon + "," + lat;
+        $.ajax({
+            type: 'get',
+            async : false,
+            cache: false,
+            url:"http://api.map.baidu.com/geoconv/v1/",
+            data:{
+                coords: coords,
+                from: 1,
+                to: 5,
+                output: "json",
+                ak: "wiOg8DA3XlkYS4k6W2jUMipP"
+            },
+            dataType: "jsonp",
+            jsonp: "callback",
+            success:function(data) {
+                if(data.status == 0) {
+                    bd_api.lon = data.result[0].x;
+                    bd_api.lat = data.result[0].y;
+                    console.info(bd_api);
+                } else {
+                    console.error("转换错误,错误状态码："+data.status);
+                }
+            }
+        });
+//        return result;
+    }
+
+    /**
+     * 高德地图逆地址(坐标->地址)编码
+     *
+     */
+    function amapGeocoder(lng, lat) {
+        var lnglatXY = [lng, lat];
+        var geocoder = new AMap.Geocoder({
+            radius: 1000,
+            extensions: "all"
+        });
+        geocoder.getAddress(lnglatXY, function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+                console.info(result)
+                var address = result.regeocode.formattedAddress;
+                document.getElementById("gcj02_add").innerHTML = address;
+            }
+        });
+    }
+
+    function updateLocation(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+
+        document.getElementById("latitude").innerHTML = latitude;
+        document.getElementById("longitude").innerHTML = longitude;
+        document.getElementById("accuracy").innerHTML = accuracy;
+
+        // 如果accuracy的值太大，我们认为它不准确，不用它计算距离
+        if (accuracy >= 500) {
+            updateStatus("这个数据太不靠谱，需要更准确的数据来计算本次移动距离。");
+            return;
+        }
+
+        // 计算移动距离
+
+        if ((lastLat != null) && (lastLong != null)) {
+            var currentDistance = distance(latitude, longitude, lastLat, lastLong);
+            document.getElementById("currDist").innerHTML =
+                    "本次移动距离：" + currentDistance.toFixed(4) + " 千米";
+
+            totalDistance += currentDistance;
+
+            document.getElementById("totalDist").innerHTML =
+                    "总计移动距离：" + currentDistance.toFixed(4) + " 千米";
+        }
+
+        lastLat = latitude;
+        lastLong = longitude;
+
+        updateStatus("计算移动距离成功。");
+    }
+
+    function handleLocationError(error) {
+        switch(error.code)
+        {
+            case 0:
+                updateStatus("尝试获取您的位置信息时发生错误：" + error.message);
+                break;
+            case 1:
+                updateStatus("用户拒绝了获取位置信息请求。");
+                break;
+            case 2:
+                updateStatus("浏览器无法获取您的位置信息：" + error.message);
+                break;
+            case 3:
+                updateStatus("获取您位置信息超时。");
+                break;
+        }
+    }
+
+    /**
+     * 坐标系转换
+     *
+     */
+    var GPS = {
+        PI : 3.14159265358979324,
+        x_pi : 3.14159265358979324 * 3000.0 / 180.0,
+        delta : function (lat, lon) {
+            // Krasovsky 1940
+            //
+            // a = 6378245.0, 1/f = 298.3
+            // b = a * (1 - f)
+            // ee = (a^2 - b^2) / a^2;
+            var a = 6378245.0; //  a: 卫星椭球坐标投影到平面地图坐标系的投影因子。
+            var ee = 0.00669342162296594323; //  ee: 椭球的偏心率。
+            var dLat = this.transformLat(lon - 105.0, lat - 35.0);
+            var dLon = this.transformLon(lon - 105.0, lat - 35.0);
+            var radLat = lat / 180.0 * this.PI;
+            var magic = Math.sin(radLat);
+            magic = 1 - ee * magic * magic;
+            var sqrtMagic = Math.sqrt(magic);
+            dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * this.PI);
+            dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * this.PI);
+            return {'lat': dLat, 'lon': dLon};
+        },
+
+        //WGS-84 to GCJ-02
+        gcj_encrypt : function (wgsLat, wgsLon) {
+            if (this.outOfChina(wgsLat, wgsLon))
+                return {'lat': wgsLat, 'lon': wgsLon};
+
+            var d = this.delta(wgsLat, wgsLon);
+            return {'lat' : wgsLat + d.lat,'lon' : wgsLon + d.lon};
+        },
+        //GCJ-02 to WGS-84
+        gcj_decrypt : function (gcjLat, gcjLon) {
+            if (this.outOfChina(gcjLat, gcjLon))
+                return {'lat': gcjLat, 'lon': gcjLon};
+
+            var d = this.delta(gcjLat, gcjLon);
+            return {'lat': gcjLat - d.lat, 'lon': gcjLon - d.lon};
+        },
+        //GCJ-02 to WGS-84 exactly
+        gcj_decrypt_exact : function (gcjLat, gcjLon) {
+            var initDelta = 0.01;
+            var threshold = 0.000000001;
+            var dLat = initDelta, dLon = initDelta;
+            var mLat = gcjLat - dLat, mLon = gcjLon - dLon;
+            var pLat = gcjLat + dLat, pLon = gcjLon + dLon;
+            var wgsLat, wgsLon, i = 0;
+            while (1) {
+                wgsLat = (mLat + pLat) / 2;
+                wgsLon = (mLon + pLon) / 2;
+                var tmp = this.gcj_encrypt(wgsLat, wgsLon)
+                dLat = tmp.lat - gcjLat;
+                dLon = tmp.lon - gcjLon;
+                if ((Math.abs(dLat) < threshold) && (Math.abs(dLon) < threshold))
+                    break;
+
+                if (dLat > 0) pLat = wgsLat; else mLat = wgsLat;
+                if (dLon > 0) pLon = wgsLon; else mLon = wgsLon;
+
+                if (++i > 10000) break;
+            }
+            //console.log(i);
+            return {'lat': wgsLat, 'lon': wgsLon};
+        },
+        //GCJ-02 to BD-09
+        bd_encrypt : function (gcjLat, gcjLon) {
+            var x = gcjLon, y = gcjLat;
+            var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * this.x_pi);
+            var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * this.x_pi);
+            bdLon = z * Math.cos(theta) + 0.0065;
+            bdLat = z * Math.sin(theta) + 0.006;
+            return {'lat' : bdLat,'lon' : bdLon};
+        },
+        //BD-09 to GCJ-02
+        bd_decrypt : function (bdLat, bdLon) {
+            var x = bdLon - 0.0065, y = bdLat - 0.006;
+            var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * this.x_pi);
+            var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * this.x_pi);
+            var gcjLon = z * Math.cos(theta);
+            var gcjLat = z * Math.sin(theta);
+            return {'lat' : gcjLat, 'lon' : gcjLon};
+        },
+        //WGS-84 to Web mercator
+        //mercatorLat -> y mercatorLon -> x
+        mercator_encrypt : function(wgsLat, wgsLon) {
+            var x = wgsLon * 20037508.34 / 180.;
+            var y = Math.log(Math.tan((90. + wgsLat) * this.PI / 360.)) / (this.PI / 180.);
+            y = y * 20037508.34 / 180.;
+            return {'lat' : y, 'lon' : x};
+            /*
+             if ((Math.abs(wgsLon) > 180 || Math.abs(wgsLat) > 90))
+             return null;
+             var x = 6378137.0 * wgsLon * 0.017453292519943295;
+             var a = wgsLat * 0.017453292519943295;
+             var y = 3189068.5 * Math.log((1.0 + Math.sin(a)) / (1.0 - Math.sin(a)));
+             return {'lat' : y, 'lon' : x};
+             //*/
+        },
+        // Web mercator to WGS-84
+        // mercatorLat -> y mercatorLon -> x
+        mercator_decrypt : function(mercatorLat, mercatorLon) {
+            var x = mercatorLon / 20037508.34 * 180.;
+            var y = mercatorLat / 20037508.34 * 180.;
+            y = 180 / this.PI * (2 * Math.atan(Math.exp(y * this.PI / 180.)) - this.PI / 2);
+            return {'lat' : y, 'lon' : x};
+            /*
+             if (Math.abs(mercatorLon) < 180 && Math.abs(mercatorLat) < 90)
+             return null;
+             if ((Math.abs(mercatorLon) > 20037508.3427892) || (Math.abs(mercatorLat) > 20037508.3427892))
+             return null;
+             var a = mercatorLon / 6378137.0 * 57.295779513082323;
+             var x = a - (Math.floor(((a + 180.0) / 360.0)) * 360.0);
+             var y = (1.5707963267948966 - (2.0 * Math.atan(Math.exp((-1.0 * mercatorLat) / 6378137.0)))) * 57.295779513082323;
+             return {'lat' : y, 'lon' : x};
+             //*/
+        },
+        // two point's distance
+        distance : function (latA, lonA, latB, lonB) {
+            var earthR = 6371000.;
+            var x = Math.cos(latA * this.PI / 180.) * Math.cos(latB * this.PI / 180.) * Math.cos((lonA - lonB) * this.PI / 180);
+            var y = Math.sin(latA * this.PI / 180.) * Math.sin(latB * this.PI / 180.);
+            var s = x + y;
+            if (s > 1) s = 1;
+            if (s < -1) s = -1;
+            var alpha = Math.acos(s);
+            var distance = alpha * earthR;
+            return distance;
+        },
+        outOfChina : function (lat, lon) {
+            if (lon < 72.004 || lon > 137.8347)
+                return true;
+            if (lat < 0.8293 || lat > 55.8271)
+                return true;
+            return false;
+        },
+        transformLat : function (x, y) {
+            var ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+            ret += (20.0 * Math.sin(6.0 * x * this.PI) + 20.0 * Math.sin(2.0 * x * this.PI)) * 2.0 / 3.0;
+            ret += (20.0 * Math.sin(y * this.PI) + 40.0 * Math.sin(y / 3.0 * this.PI)) * 2.0 / 3.0;
+            ret += (160.0 * Math.sin(y / 12.0 * this.PI) + 320 * Math.sin(y * this.PI / 30.0)) * 2.0 / 3.0;
+            return ret;
+        },
+        transformLon : function (x, y) {
+            var ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+            ret += (20.0 * Math.sin(6.0 * x * this.PI) + 20.0 * Math.sin(2.0 * x * this.PI)) * 2.0 / 3.0;
+            ret += (20.0 * Math.sin(x * this.PI) + 40.0 * Math.sin(x / 3.0 * this.PI)) * 2.0 / 3.0;
+            ret += (150.0 * Math.sin(x / 12.0 * this.PI) + 300.0 * Math.sin(x / 30.0 * this.PI)) * 2.0 / 3.0;
+            return ret;
+        }
+    };
+
+</script>
+</body>
+</html>
+
