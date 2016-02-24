@@ -61,5 +61,3 @@ rake theme:switch name="the-program"
 - [The Quickest Way to Blog on GitHub Pages](http://jekyllbootstrap.com/)
 - [上面网站的`Using Themes`部分](http://jekyllbootstrap.com/usage/jekyll-theming.html)
 
-
-

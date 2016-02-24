@@ -17,9 +17,36 @@
 h1, h2, h3, h4 {
   color: #f22430;
 }
+
 #footer {
   background-color: #fdcd60;
 }
+
+/*content*/
+#markdown-toc::before {
+    content: "目录";
+    font-weight: bold;
+}
+ul#markdown-toc {
+    background: #f4f7f8 none repeat scroll 0 0;
+    border: 0.5em solid #fff;
+    border-radius: 0.3em;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    list-style: outside none none;
+    padding: 0;
+    position: fixed;
+	top: 48px;
+	right: 1px;
+	max-height:560px;
+	max-width:250px;
+	overflow-y:auto;
+}
+/*
+ul#markdown-toc li {
+    list-style: outside none none;
+}
+*/
 
 
 
