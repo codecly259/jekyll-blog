@@ -12407,8 +12407,8 @@ function(e, t, n) {
                 prefixCls: "ant-modal",
                 onOk: i,
                 onCancel: i,
-                okText: "Á°ÆÂÆö",
-                cancelText: "ÂèñÊ∂à",
+                okText: "»∑∂®",
+                cancelText: "»°œ˚",
                 width: 520,
                 transitionName: "zoom",
                 maskAnimation: "fade",
@@ -12641,7 +12641,7 @@ function(e, t, n) {
                     horizontal: !0
                 },
                 c["default"].createElement(f.Item, {
-                    label: "URL",
+                    label: "URL£∫",
                     labelCol: {
                         span: 6
                     },
@@ -12670,7 +12670,7 @@ function(e, t, n) {
                     className: "ant-form-explain"
                 },
                 s("name") ? s("name").join("") : ""))), c["default"].createElement(f.Item, {
-                    label: "Title",
+                    label: "Title£∫",
                     labelCol: {
                         span: 6
                     },
@@ -12698,7 +12698,7 @@ function(e, t, n) {
                     className: "ant-form-explain"
                 },
                 s("title") ? s("title").join("") : ""))), c["default"].createElement(f.Item, {
-                    label: "Description",
+                    label: "Description£∫",
                     labelCol: {
                         span: 6
                     },
@@ -18220,8 +18220,8 @@ function(e, t, n) {
         var u = e.iconClassName,
         c = e.width || 416;
         "okCancel" in e || (e.okCancel = !0),
-        e.okText = e.okText || (e.okCancel ? "Á°ÆÂÆö":"Áü•ÈÅì‰∫Ü"),
-        e.cancelText = e.cancelText || "ÂèñÊ∂à";
+        e.okText = e.okText || (e.okCancel ? "»∑∂®": "÷™µ¿¡À"),
+        e.cancelText = e.cancelText || "»°œ˚";
         var p = o["default"].createElement("div", {
             className: "ant-confirm-body"
         },
@@ -22401,7 +22401,7 @@ function(e, t, n) {
         {
             key: "handleAddFile",
             value: function(e) {
-                // event.preventDefault();
+                //event.preventDefault();
                 var t = this.props,
                 n = t.dispatch,
                 r = t.user,
