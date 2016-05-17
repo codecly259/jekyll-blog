@@ -1,0 +1,16 @@
+<script type="text/javascript">
+var quotes = [
+"hello world @js",
+"勿以恶小而为之，勿以善小而不为 @刘备",
+"你们真的是够了 @无名氏",
+"KISS(Keep It Simple, Stupid) @设计原则",
+];
+
+
+
+(function() {
+  var randomNum = parseInt(Math.random() * quotes.length);
+  console.info(quotes[randomNum]);
+  document.getElementById("random_quote").innerHtml(quotes[randomNum]);
+})();
+</script>
